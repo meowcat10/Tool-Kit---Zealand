@@ -48,8 +48,16 @@
     <Image Include="small.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="ZealandProject.ico">
+    <Image Include="..\..\Logo\Tool Kit (1).ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\Logo\IDI_SMALL.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\logo\idd_inpu.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

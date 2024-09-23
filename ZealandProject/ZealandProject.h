@@ -1,11 +1,6 @@
 #include "resource.h"
 #include <windows.h>
 
-extern int R_Value;
-extern int G_Value;
-extern int B_Value;
-
-
 //Settings Value
 // Theme Button : 1500
 // Search Button : 1501
@@ -17,11 +12,15 @@ extern int B_Value;
 // Show Important : 1507
 // Check for updates : 1508
 
-// Clear Notebox : 1509
-// Save Notebox : 1510
+// NoteBox : 1509
+// Clear Notebox : 1510
+// Save Notebox : 1511
+// Open Last Saved : 1512
 
 // Dialog : 1513
 //Color Button : 1514
+
+//
 
 
 //Other Value
@@ -39,11 +38,10 @@ extern int B_Value;
 // Twitter : 1012
 
 
-extern int Color;
 extern float Version;
 extern int QuestionSetting;
-extern int ShowImportant;
 extern int g_sliderValue;
+
 
 // Button Creation
 
@@ -120,9 +118,13 @@ void PerformSearch(HWND hWnd);
 
 void ClearMemory();
 
-void SaveNoteboxContent(HWND Notebox);
 
 // Amount of references under listbox
-#define NUM_ITEMS_BOX 28
+#define NUM_ITEMS_BOX 32
 void BoxSelection(HWND hWnd, LPCWSTR ItemText);
 
+
+// Note related
+bool FindLastNote(LPCWSTR filename);
+void SaveNoteboxContent(HWND Notebox);
+void LoadSavedTextFile(HWND hWnd);

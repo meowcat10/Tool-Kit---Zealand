@@ -8,6 +8,9 @@
 #include <fstream>
 #include <Richedit.h>
 #include <commdlg.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 HWND CreateButton(
 	HWND parent,
@@ -233,34 +236,38 @@ typedef struct {
 } ListItem;
 
 ListItem ListItems[NUM_ITEMS_BOX] = {
-	{ L"○ Moodle", L"https://moodle.zealand.dk/my/"},
-	{ L"○ Skema", L"https://cloud.timeedit.net/zealand/web/3/ri1Y725QQ75Zc0Q39757ZpQ9.html" },
-	{ L"○ Office", L"https://www.office.com" },
-	{ L"○ Outlook", L"https://outlook.office.com/mail/" },
-	{ L"○ Word", L"https://www.office.com/launch/Word/" },
-	{ L"○ OneNote", L"https://www.office.com/launch/OneNote/" },
-	{ L"○ Excel", L"https://www.office.com/launch/Excel/" },
-	{ L"○ Forms", L"https://forms.office.com/Pages/DesignPageV2.aspx?origin=shell&subpage=creationv2" },
-	{ L"○ OneDrive", L"https://www.office.com/onedrive" },
-	{ L"○ Zoom", L"https://zealand.zoom.us" },
-	{ L"○ Adobe", L"https://www.adobe.com/dk/creativecloud.html?mv=search&mv=search&mv2=paidsearch&sdid=D4P81NYZ&ef_id=Cj0KCQjw9Km3BhDjARIsAGUb4nzufZ-cRsL_5B8Fz_3wBINq1nCIP_DyEc92KYcwwxFKsjc8PPGK2KAaApcuEALw_wcB:G:s&s_kwcid=AL!3085!3!281107192278!e!!g!!adobe!1470417004!57319424579&gad_source=1&gclid=Cj0KCQjw9Km3BhDjARIsAGUb4nzufZ-cRsL_5B8Fz_3wBINq1nCIP_DyEc92KYcwwxFKsjc8PPGK2KAaApcuEALw_wcB"},
-	{ L"○ Wiseflow", L"https://europe.wiseflow.net/participant/" },
-	{ L"○ Conzoom", L"https://www.conzoom.dk/da/danmark/segmenter" },
-	{ L"○ DinGeo", L"https://www.dingeo.dk" },
-	{ L"○ Canva", L"https://www.canva.com" },
-	{ L"○ Validator - HTML", L"https://validator.w3.org" },
-	{ L"○ References - HTML", L"https://www.w3schools.com/tags/default.asp" },
-	{ L"○ MDN Web", L"https://developer.mozilla.org/en-US/docs/Web" },
-	{ L"○ Studiekort", L"https://kort.zea.dk" },
-	{ L"○ Studieordning", L"https://www.zealand.dk/wp-content/uploads/2016/09/Multimediedesign-samlet-studieordning-2024.pdf" },
-	{ L"○ UMS", L"https://ums.zea.dk/loggedin/default.aspx" },
-	{ L"○ Studievejledning", L"https://moodle.zealand.dk/course/view.php?id=4590" },
-	{ L"○ SPS", L"https://moodle.zealand.dk/course/view.php?id=4517" },
-	{ L"○ Google Translate", L"https://translate.google.com/?sl=auto&tl=da&op=translate" },
-	{ L"○ UddannelsesGuiden", L"https://www.ug.dk" },
-	{ L"○ Rejseplanen", L"https://rejseplanen.dk" },
-	{ L"○ Polyteknisk - Books", L"https://polyteknisk.vitalsource.com/home/my-library?context=login" },
-	{ L"○ Gmail", L"https://mail.google.com/mail" }
+	{ L"Moodle", L"https://moodle.zealand.dk/my/"},
+	{ L"Skema", L"https://cloud.timeedit.net/zealand/web/3/ri1Y725QQ75Zc0Q39757ZpQ9.html" },
+	{ L"Office", L"https://www.office.com" },
+	{ L"Outlook", L"https://outlook.office.com/mail/" },
+	{ L"Word", L"https://www.office.com/launch/Word/" },
+	{ L"OneNote", L"https://www.office.com/launch/OneNote/" },
+	{ L"Excel", L"https://www.office.com/launch/Excel/" },
+	{ L"Forms", L"https://forms.office.com/Pages/DesignPageV2.aspx?origin=shell&subpage=creationv2" },
+	{ L"OneDrive", L"https://www.office.com/onedrive" },
+	{ L"Zoom", L"https://zealand.zoom.us" },
+	{ L"Adobe", L"https://www.adobe.com/dk/creativecloud.html?mv=search&mv=search&mv2=paidsearch&sdid=D4P81NYZ&ef_id=Cj0KCQjw9Km3BhDjARIsAGUb4nzufZ-cRsL_5B8Fz_3wBINq1nCIP_DyEc92KYcwwxFKsjc8PPGK2KAaApcuEALw_wcB:G:s&s_kwcid=AL!3085!3!281107192278!e!!g!!adobe!1470417004!57319424579&gad_source=1&gclid=Cj0KCQjw9Km3BhDjARIsAGUb4nzufZ-cRsL_5B8Fz_3wBINq1nCIP_DyEc92KYcwwxFKsjc8PPGK2KAaApcuEALw_wcB"},
+	{ L"Wiseflow", L"https://europe.wiseflow.net/participant/" },
+	{ L"Conzoom", L"https://www.conzoom.dk/da/danmark/segmenter" },
+	{ L"DinGeo", L"https://www.dingeo.dk" },
+	{ L"Canva", L"https://www.canva.com" },
+	{ L"Validator - HTML", L"https://validator.w3.org" },
+	{ L"References - HTML", L"https://www.w3schools.com/tags/default.asp" },
+	{ L"MDN Web", L"https://developer.mozilla.org/en-US/docs/Web" },
+	{ L"Studiekort", L"https://kort.zea.dk" },
+	{ L"Studieordning", L"https://www.zealand.dk/wp-content/uploads/2016/09/Multimediedesign-samlet-studieordning-2024.pdf" },
+	{ L"UMS", L"https://ums.zea.dk/loggedin/default.aspx" },
+	{ L"Studievejledning", L"https://moodle.zealand.dk/course/view.php?id=4590" },
+	{ L"SPS", L"https://moodle.zealand.dk/course/view.php?id=4517" },
+	{ L"Google Translate", L"https://translate.google.com/?sl=auto&tl=da&op=translate" },
+	{ L"UddannelsesGuiden", L"https://www.ug.dk" },
+	{ L"Rejseplanen", L"https://rejseplanen.dk" },
+	{ L"Polyteknisk - Books", L"https://polyteknisk.vitalsource.com/home/my-library?context=login" },
+	{ L"Gmail", L"https://mail.google.com/mail" },
+	{ L"Studiebolig", L"https://s.dk" },
+	{ L"Photo/Video Converter", L"https://ezgif.com" },
+	{ L"CopyPaste Emojis", L"https://apps.timwhitlock.info/emoji/tables/unicode" },
+	{ L"CopyPaste Symbols", L"https://coolsymbol.com" }
 };
 
 void BoxSelection(HWND hWnd, LPCWSTR ItemText) {
@@ -271,3 +278,50 @@ void BoxSelection(HWND hWnd, LPCWSTR ItemText) {
 		}
 	}
 }
+
+
+
+bool FindLastNote(LPCWSTR filename) {
+	//Check if there is a saved note
+	DWORD fileAttr = GetFileAttributes(filename);
+	if (fileAttr == INVALID_FILE_ATTRIBUTES) {
+		return false;
+	}
+
+	return true;
+}
+
+void LoadSavedTextFile(HWND hWnd) {
+	std::wifstream file(L"Saved Notebox.txt");
+	if (file.is_open()) {
+		std::wstring textContent; 
+		std::wstring line;
+		while (std::getline(file, line)) {
+			textContent += line + L"\n";
+		}
+		SetWindowText(GetDlgItem(hWnd, 1509), textContent.c_str());
+		file.close();
+	}
+	else {
+		MessageBox(hWnd, L"Failed to find last saved note, please make sure the notes are placed in the same folder as the application!", L"Failed", MB_OK | MB_ICONERROR);
+	}
+}
+
+
+	
+
+void ShowInputDialog(HWND hWndParent) {
+	HWND hDialog = CreateWindowEx(
+		WS_EX_DLGMODALFRAME,
+		WC_DIALOG,
+		L"Enter Shutdown Timer (Seconds)",
+		WS_VISIBLE | WS_SYSMENU | WS_CAPTION | WS_POPUP,
+		CW_USEDEFAULT, CW_USEDEFAULT, 300, 150,
+		hWndParent,
+		NULL,
+		GetModuleHandle(NULL),
+		NULL
+			
+	);
+}
+

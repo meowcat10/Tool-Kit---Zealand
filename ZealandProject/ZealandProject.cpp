@@ -10,9 +10,11 @@
 #include <malloc.h>
 #include <mmsystem.h>
 #include <Richedit.h>
+#include <string>
 
 #define MAX_LOADSTRING 100
 #define MAX_SIZE 16382
+
 
 
 // Global Variables:
@@ -26,11 +28,11 @@ float Version = 1.8;
 
 //Settings
 int QuestionSetting = 1;
-int ShowImportant = 0;
+//int ShowImportant = 0;
 
 int g_sliderValue = 130;
 
-
+int shutdowntime = 1;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -93,12 +95,12 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ZEALANDPROJECT));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = CreateSolidBrush(RGB(g_sliderValue, g_sliderValue, g_sliderValue));
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_ZEALANDPROJECT);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDI_ICON1);
     wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
     return RegisterClassExW(&wcex);
 }
@@ -126,7 +128,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
 // Text List here to create "box effect" under buttons
-   HWND SocialsText = CreateText(hWnd, hInst, 248, 45, 204, 260, L"               ▸ Socials ◂");
+   HWND SocialsText = CreateText(hWnd, hInst, 248, 45, 204, 260, L"                   Socials ");
 
 // BUTTONS
    HWND YouTubeButton = CreateButton(hWnd, hInst, 250, 70, 100, 30, L"YouTube", 1001);
@@ -144,25 +146,34 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    HWND ClearNoteBoxButton = CreateButton(hWnd, hInst, 470, 220, 100, 30, L"Clear", 1510);
    HWND SaveNoteBoxButton = CreateButton(hWnd, hInst, 570, 220, 100, 30, L"Save", 1511);
-   HWND ColorButton = CreateButton(hWnd, hInst, 620, 40, 50, 20, L"Color", 1514);
+   HWND OpenLastNoteButton = CreateButton(hWnd, hInst, 470, 250, 200, 20, L"Open Last Saved", 1512);
 
 
    HWND SearchButton = CreateButton(hWnd, hInst, 30, 320, 80, 30, L"Go!", 1501);
    HWND BugReportsButton = CreateButton(hWnd, hInst, 30, 460, 70, 20, L"Report a bug", 1505);
    HWND CheckForUpdatesButton = CreateButton(hWnd, hInst, 100, 460, 100, 20, L"Check for Updates", 1508);
-
+   HWND CustomShutdownTimer = CreateButton(hWnd, hInst, 303, 478, 105, 15, L"Custom Shutdown", 1514);
+   HWND CustomShutdownTimerCancel = CreateButton(hWnd, hInst, 200, 478, 105, 15, L"Cancel Shutdown", 1515);
 
 // Text
    HWND TitleText = CreateText(hWnd, hInst, 30, 10, 125, 38, L" Tool Kit 1.8\nZealand Edition");
    HWND SettingsText = CreateText(hWnd, hInst, 30, 380, 68, 20, L"Settings");
    HWND InputText = CreateText(hWnd, hInst, 30, 280, 200, 30, L"Internet Search");
    HWND ListBoxDescription = CreateText(hWnd, hInst, 30, 60, 100, 30, L" Websites");
-   HWND ThemeTextSlider = CreateText(hWnd, hInst, 150, 355, 210, 17, L"Brightness");
+   HWND ThemeTextSlider = CreateText(hWnd, hInst, 196, 400, 210, 30, L"Brightness");
    HWND NoteBoxText = CreateText(hWnd, hInst, 471, 40, 58, 30, L"Notebox");
+
+   HWND IntroductionText = CreateText(hWnd, hInst, 700, 30, 350, 20, L"                 Velkommen til Tool kit! ");
+   HWND IntroductionText2 = CreateText(hWnd, hInst, 700, 53, 350, 175, L"Dette er en applikation, som har til formål at gøre skoledagen nemmere og mere overskuelig. Dette opnås ved at samle genveje til vigtige eller brugbare hjemmesider.\n\nDer vil løbende blive arbejdet på at forbedre applikationen, og implementere flere ting, som kan gøre den mere fleksibel. Hvis du oplever nogle fejl eller lignende, kan du rapportere dem ved at klikke på 'Report a bug' nede i venstre side.");
+
    
    
    //Font
-   SetFontSize(ColorButton, 13);
+   SetFontSize(CustomShutdownTimerCancel, 12);
+   SetFontSize(CustomShutdownTimer, 12);
+   SetFontSize(IntroductionText, 20);
+   SetFontSize(OpenLastNoteButton, 12);
+   //SetFontSize(ColorButton, 13);
    SetFontSize(MessengerButtonZealand, 10);
    SetFontSize(FacebookButtonZealand, 10);
    SetFontSize(SocialsText, 18);
@@ -197,12 +208,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        NULL,
        (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL
    );
-   HWND ColorBox = CreateWindowEx(0, MSFTEDIT_CLASS, L"",
-       WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | WS_VSCROLL,
-       10, 10, 300, 200, hWnd, (HMENU)1515, hInst, NULL);
-   HWND ToggleWarning = CreateToggleButton(hWnd, hInst, 30, 400, 278, 30, L"Question - Pop Up", 1503);
-   HWND ToggleAlwaysOnTop = CreateToggleButton(hWnd, hInst, 30, 430, 138, 30, L"Always On Top", 1504);
-   HWND ToggleShowImportant = CreateToggleButton(hWnd, hInst, 168, 430, 140, 30, L"Show Important", 1507);
+   HWND ToggleWarning = CreateToggleButton(hWnd, hInst, 30, 400, 167, 30, L"Question - Pop Up", 1503);
+   HWND ToggleAlwaysOnTop = CreateToggleButton(hWnd, hInst, 30, 430, 167, 30, L"Always On Top", 1504);
+   //HWND ToggleShowImportant = CreateToggleButton(hWnd, hInst, 168, 430, 140, 30, L"Show Important", 1507);
    SendMessage(ToggleWarning, BM_SETCHECK, BST_CHECKED, 0);
    //CreateTabs(hWnd, hInst);
    ListBoxCreation(hWnd, hInst);
@@ -228,39 +236,44 @@ void ClearMemory()
 
 
 
+
 void ListBoxCreation(HWND hWnd, HINSTANCE hInst) {
     HWND MakeListBox = CreateListBox(hWnd, hInst, 30, 75, 200, 200, 1506, LBS_STANDARD);
 
-    SendMessage(MakeListBox, LB_INSERTSTRING, 0, (LPARAM)L"○ Moodle");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 1, (LPARAM)L"○ Skema");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 2, (LPARAM)L"○ Office");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 3, (LPARAM)L"○ Outlook");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 4, (LPARAM)L"○ Gmail");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 5, (LPARAM)L"○ Word");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 6, (LPARAM)L"○ OneNote");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 7, (LPARAM)L"○ Excel");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 8, (LPARAM)L"○ Forms");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 9, (LPARAM)L"○ OneDrive");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 10, (LPARAM)L"○ Zoom");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 11, (LPARAM)L"○ Adobe");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 12, (LPARAM)L"○ Wiseflow");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 13, (LPARAM)L"○ Polyteknisk - Books");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 14, (LPARAM)L"○ Conzoom");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 15, (LPARAM)L"○ DinGeo");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 16, (LPARAM)L"○ Canva");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 17, (LPARAM)L"○ Validator - HTML");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 18, (LPARAM)L"○ References - HTML");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 19, (LPARAM)L"○ MDN Web");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 20, (LPARAM)L"○ Studiekort");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 21, (LPARAM)L"○ Studieordning");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 22, (LPARAM)L"○ UMS");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 23, (LPARAM)L"○ Studievejledning");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 24, (LPARAM)L"○ SPS");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 25, (LPARAM)L"○ Google Translate");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 26, (LPARAM)L"○ UddannelsesGuiden");
-    SendMessage(MakeListBox, LB_INSERTSTRING, 27, (LPARAM)L"○ Rejseplanen");
-}
+    SendMessage(MakeListBox, LB_INSERTSTRING, 0, (LPARAM)L"Moodle");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 1, (LPARAM)L"Skema");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 2, (LPARAM)L"Office");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 3, (LPARAM)L"Outlook");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 4, (LPARAM)L"Gmail");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 5, (LPARAM)L"Word");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 6, (LPARAM)L"OneNote");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 7, (LPARAM)L"Excel");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 8, (LPARAM)L"Forms");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 9, (LPARAM)L"OneDrive");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 10, (LPARAM)L"Zoom");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 11, (LPARAM)L"Adobe");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 12, (LPARAM)L"Wiseflow");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 13, (LPARAM)L"Polyteknisk - Books");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 14, (LPARAM)L"Conzoom");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 15, (LPARAM)L"DinGeo");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 16, (LPARAM)L"Canva");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 17, (LPARAM)L"Validator - HTML");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 18, (LPARAM)L"References - HTML");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 19, (LPARAM)L"Photo/Video Converter");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 20, (LPARAM)L"CopyPaste Emojis");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 21, (LPARAM)L"CopyPaste Symbols");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 22, (LPARAM)L"MDN Web");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 23, (LPARAM)L"Studiekort");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 24, (LPARAM)L"Studieordning");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 25, (LPARAM)L"UMS");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 26, (LPARAM)L"Studievejledning");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 27, (LPARAM)L"SPS");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 28, (LPARAM)L"Google Translate");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 29, (LPARAM)L"UddannelsesGuiden");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 30, (LPARAM)L"Rejseplanen");
+    SendMessage(MakeListBox, LB_INSERTSTRING, 31, (LPARAM)L"Studiebolig");
 
+}
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -483,7 +496,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case 1505:
             {
                 wchar_t url[1024];
-                wsprintf(url, L"");
+                wsprintf(url, L"https://forms.office.com/e/yqJ0QFxnkd");
                 if (QuestionSetting == 1) {
                     int msgboxID = MessageBox(hWnd, L"Do you wish to report a bug?", L"Bug Report", MB_YESNO | MB_ICONERROR);
                     if (msgboxID == IDYES) {
@@ -508,27 +521,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 break;
             }
-
-            case 1507:
-            {
-                HWND ToggleShowImportantButton = GetDlgItem(hWnd, 1507);
-                if (ToggleShowImportantButton) {
-                    int state = SendMessage(ToggleShowImportantButton, BM_GETCHECK, 0, 0);
-                    if (state == BST_CHECKED) {
-
-                    }
-                }
-                ClearMemory();
-                break;
-            }
             case 1508: // Update
             {
-
+                wchar_t url[1024];
+                wsprintf(url, L"https://github.com/meowcat10/ToolkitZealandEdition/releases");
+                if (QuestionSetting == 1) {
+                    int msgboxID = MessageBox(hWnd, L"Do you wish to check for updates?", L"Update", MB_YESNO);
+                    if (msgboxID == IDYES) {
+                        ShellExecute(0, L"open", url, 0, 0, SW_SHOW);
+                    }
+                }
+                else if (QuestionSetting == 0) {
+                    ShellExecute(0, L"open", url, 0, 0, SW_SHOW);
+                }
+                break;
             }
+            
             case 1510:
             {
                 if (GetWindowTextLength(GetDlgItem(hWnd, 1509)) > 0) {
-                    
                     if (QuestionSetting == 1) {
                         int msgboxID = MessageBox(hWnd, L"Do you wish to CLEAR the notebox?", L"Notification", MB_YESNO | MB_ICONQUESTION);
                         if (msgboxID == IDYES) {
@@ -555,26 +566,70 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }                
                 break;
             }
-            case 1514: 
+            case 1512:
             {
-                CHOOSECOLOR cc;
-                COLORREF acrCustClr[16];
-                ZeroMemory(&cc, sizeof(cc));
-                cc.lStructSize = sizeof(cc);
-                cc.hwndOwner = hWnd;
-                cc.lpCustColors = (LPDWORD)acrCustClr;
-                cc.rgbResult = RGB(0, 0, 0);
-                cc.Flags = CC_FULLOPEN | CC_RGBINIT;
-                if (ChooseColor(&cc)) {
-                    CHARFORMAT2 cf;
-                    ZeroMemory(&cf, sizeof(cf));
-                    cf.cbSize = sizeof(CHARFORMAT2);
-                    cf.dwMask = CFM_COLOR;
-                    cf.crTextColor = cc.rgbResult;
-                    SendMessage(GetDlgItem(hWnd, 1509), EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cf);
+                LPCWSTR filename = L"Saved Notebox.txt";
+                if (QuestionSetting == 1) {
+                    int msgboxID = MessageBox(hWnd, L"Do you wish to open last saved note?", L"Last Saved", MB_YESNO | MB_ICONQUESTION);
+                    if (msgboxID == IDYES) {
+                        if (FindLastNote(filename)) {
+                            LoadSavedTextFile(hWnd);
+                        }
+                        else {
+                            MessageBox(hWnd, L"Failed to find last saved note, please make sure the notes are placed in the same folder as the application!", L"Failed", MB_OK | MB_ICONERROR);
+                        }
+                    }
+                }
+                else if (QuestionSetting == 0) {
+                    if (FindLastNote(filename)) {
+                        LoadSavedTextFile(hWnd);
+                    }
+                    else {
+                        MessageBox(hWnd, L"Failed to find last saved note, please make sure the notes are placed in the same folder as the application!", L"Failed", MB_OK | MB_ICONERROR);
+                    }
+                }     
+                break;
+            }
+            
+            case 1514:
+            {
+                int msgboxID = MessageBox(hWnd, L"Do you wish to create a shutdown timer?", L"Custom Shutdown", MB_YESNO);
+                if (msgboxID == IDYES) {
+                    while (true) {
+                        std::wstring message = L"Do you wish to create a shutdown timer for " + std::to_wstring(shutdowntime) + L" hours?";
+                        int msgboxID2 = MessageBox(hWnd, message.c_str(), L"Shutdown Timer - Creation", MB_YESNOCANCEL);
+                        if (msgboxID2 == IDYES) {
+                            std::wstring shutdownCommand = L"shutdown -s -t " + std::to_wstring(shutdowntime * 3600);
+                            std::string command (shutdownCommand.begin(), shutdownCommand.end());
+                            system(command.c_str());
+                            shutdowntime = 1;
+                            break;
+                        }
+                        if (msgboxID2 == IDNO) {
+                            shutdowntime++;
+                        }
+                        if (msgboxID2 == IDCANCEL) {
+                            break;
+                        }
+                    }
                 }
                 break;
             }
+            case 1515:
+            {
+                if (QuestionSetting == 1) {
+                    int msgboxID = MessageBox(hWnd, L"Do you wish to cancel any ongoing shutdown timers?", L"Cancel Timer", MB_YESNO);
+                    if (msgboxID == IDYES) {
+                        system("shutdown -a");
+                    }
+                }
+                else {
+                    system("shutdown -a");
+                }
+                break;
+            }
+          
+            
 
             // Check Box - (Question Pop Up)
             case 1503:
@@ -612,7 +667,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
 
             //Create Black Color
-            PenBlack = CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
+            PenBlack = CreatePen(PS_SOLID, 4, RGB(0, 0, 0));
             PenOld = (HPEN)SelectObject(hdc, PenBlack);
 
             //Line
@@ -636,26 +691,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             LineTo(hdc, 156, 48);
 
             //Website (Top)
-            MoveToEx(hdc, 29, 58, NULL);
-            LineTo(hdc, 131, 58);
+            MoveToEx(hdc, 29, 59, NULL);
+            LineTo(hdc, 131, 59);
 
             //Website Side (Right)
-            MoveToEx(hdc, 29, 57, NULL);
+            MoveToEx(hdc, 29, 58, NULL);
             LineTo(hdc, 29, 76);
 
             //Website Side (Left)
-            MoveToEx(hdc, 131, 57, NULL);
+            MoveToEx(hdc, 131, 58, NULL);
             LineTo(hdc, 131, 76);
 
+            // Listbox Side (Left)
+            MoveToEx(hdc, 29, 270, NULL);
+            LineTo(hdc, 29, 75);
+            
+            //Listbox Bottom
+            MoveToEx(hdc, 29, 270, NULL);
+            LineTo(hdc, 230, 270);
 
+            //Listbox Side (Right)
+            MoveToEx(hdc, 231, 270, NULL);
+            LineTo(hdc, 231, 73);
+
+            //Listbox Side (Up)
+            MoveToEx(hdc, 230, 74, NULL);
+            LineTo(hdc, 100, 74);
+
+        
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_CREATE:
     {
         
-        //Brightness
-        HWND CreateThemeSlider = CreateSliderFunction(hWnd, hInst, 150, 373, 210, 20, 1508, 1, 10, 5);
+        //Brightness 
+        HWND CreateThemeSlider = CreateSliderFunction(hWnd, hInst, 196, 428, 210, 50, 1508, 1, 10, 5);
         SendMessage(CreateThemeSlider, TBM_SETPOS, TRUE, 5);
 
         break;
